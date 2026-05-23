@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FIFA World Cup 2026™ Fantasy Draft Wheel</title>
+<title>FIFA World Cup 2026 Fantasy Draft Wheel</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Bebas+Neue&family=Source+Sans+3:wght@400;600&display=swap');
 
@@ -81,7 +81,7 @@
     margin-top: 2px;
   }
 
-  /* ─── MAIN 3-COLUMN + SIDEBAR LAYOUT ─── */
+  /* --- MAIN 3-COLUMN + SIDEBAR LAYOUT --- */
   .arena {
     position: relative;
     z-index: 2;
@@ -265,7 +265,7 @@
   .player-tag .remove-x:hover { color: var(--accent-red); }
   .player-tag.eliminated .remove-x { display: none; }
 
-  /* ─── CENTER COLUMN (between wheels) ─── */
+  /* --- CENTER COLUMN (between wheels) --- */
   .center-col {
     display: flex;
     flex-direction: column;
@@ -407,7 +407,7 @@
     100% { transform: scale(1); opacity: 1; }
   }
 
-  /* ─── DRAFT RESULTS SIDEBAR ─── */
+  /* --- DRAFT RESULTS SIDEBAR --- */
   .draft-sidebar {
     flex-shrink: 0;
     width: 220px;
@@ -530,7 +530,7 @@
     pointer-events: none;
   }
 
-  /* ─── RESPONSIVE ─── */
+  /* --- RESPONSIVE --- */
   @media (max-width: 1100px) {
     .draft-sidebar { width: 180px; }
     .wheel-wrapper {
@@ -589,7 +589,7 @@
 <div class="arena">
   <!-- LEFT: TEAM WHEEL -->
   <div class="wheel-col">
-    <div class="wheel-label">Teams — <strong id="teamCount">48</strong> remaining</div>
+    <div class="wheel-label">Teams - <strong id="teamCount">48</strong> remaining</div>
     <div class="wheel-wrapper">
       <div class="pointer" id="teamPointer"></div>
       <canvas class="wheel-canvas" id="teamWheel"></canvas>
@@ -606,7 +606,7 @@
 
   <!-- RIGHT: PLAYER WHEEL -->
   <div class="wheel-col">
-    <div class="wheel-label">Players — <strong id="playerCount">0</strong> remaining</div>
+    <div class="wheel-label">Players - <strong id="playerCount">0</strong> remaining</div>
     <div class="wheel-wrapper">
       <div class="pointer" id="playerPointer"></div>
       <canvas class="wheel-canvas" id="playerWheel"></canvas>
@@ -624,7 +624,7 @@
   <!-- FAR RIGHT: DRAFT RESULTS SIDEBAR -->
   <div class="draft-sidebar">
     <div class="draft-sidebar-title">Draft Results</div>
-    <button class="download-btn" id="downloadBtn" onclick="downloadDraft()" disabled>⬇ Download</button>
+    <button class="download-btn" id="downloadBtn" onclick="downloadDraft()" disabled>&#x2B07; Download</button>
     <div class="draft-list" id="draftList">
       <div class="draft-sidebar-empty">No picks yet</div>
     </div>
@@ -634,56 +634,63 @@
 <canvas id="confetti"></canvas>
 
 <script>
+// Convert 2-letter country code to flag emoji at runtime (avoids hidden Unicode in source)
+function codeToFlag(code) {
+  if (code === 'GB-ENG') return String.fromCodePoint(0x1F3F4,0xE0067,0xE0062,0xE0065,0xE006E,0xE0067,0xE007F);
+  if (code === 'GB-SCT') return String.fromCodePoint(0x1F3F4,0xE0067,0xE0062,0xE0073,0xE0063,0xE0074,0xE007F);
+  return [...code.toUpperCase()].map(c => String.fromCodePoint(0x1F1E6 + c.charCodeAt(0) - 65)).join('');
+}
+
 const ALL_TEAMS = [
-  { name: "England", flag: "🏴󠁧󠁢󠁥󠁮󠁧󠁿", conf: "UEFA" },
-  { name: "France", flag: "🇫🇷", conf: "UEFA" },
-  { name: "Spain", flag: "🇪🇸", conf: "UEFA" },
-  { name: "Germany", flag: "🇩🇪", conf: "UEFA" },
-  { name: "Portugal", flag: "🇵🇹", conf: "UEFA" },
-  { name: "Netherlands", flag: "🇳🇱", conf: "UEFA" },
-  { name: "Belgium", flag: "🇧🇪", conf: "UEFA" },
-  { name: "Croatia", flag: "🇭🇷", conf: "UEFA" },
-  { name: "Switzerland", flag: "🇨🇭", conf: "UEFA" },
-  { name: "Austria", flag: "🇦🇹", conf: "UEFA" },
-  { name: "Norway", flag: "🇳🇴", conf: "UEFA" },
-  { name: "Scotland", flag: "🏴󠁧󠁢󠁳󠁣󠁴󠁿", conf: "UEFA" },
-  { name: "Sweden", flag: "🇸🇪", conf: "UEFA" },
-  { name: "Türkiye", flag: "🇹🇷", conf: "UEFA" },
-  { name: "Bosnia & Herz.", flag: "🇧🇦", conf: "UEFA" },
-  { name: "Czechia", flag: "🇨🇿", conf: "UEFA" },
-  { name: "Argentina", flag: "🇦🇷", conf: "CONMEBOL" },
-  { name: "Brazil", flag: "🇧🇷", conf: "CONMEBOL" },
-  { name: "Uruguay", flag: "🇺🇾", conf: "CONMEBOL" },
-  { name: "Colombia", flag: "🇨🇴", conf: "CONMEBOL" },
-  { name: "Ecuador", flag: "🇪🇨", conf: "CONMEBOL" },
-  { name: "Paraguay", flag: "🇵🇾", conf: "CONMEBOL" },
-  { name: "USA", flag: "🇺🇸", conf: "CONCACAF" },
-  { name: "Mexico", flag: "🇲🇽", conf: "CONCACAF" },
-  { name: "Canada", flag: "🇨🇦", conf: "CONCACAF" },
-  { name: "Panama", flag: "🇵🇦", conf: "CONCACAF" },
-  { name: "Haiti", flag: "🇭🇹", conf: "CONCACAF" },
-  { name: "Curaçao", flag: "🇨🇼", conf: "CONCACAF" },
-  { name: "Morocco", flag: "🇲🇦", conf: "CAF" },
-  { name: "Senegal", flag: "🇸🇳", conf: "CAF" },
-  { name: "Côte d'Ivoire", flag: "🇨🇮", conf: "CAF" },
-  { name: "Egypt", flag: "🇪🇬", conf: "CAF" },
-  { name: "Algeria", flag: "🇩🇿", conf: "CAF" },
-  { name: "Ghana", flag: "🇬🇭", conf: "CAF" },
-  { name: "South Africa", flag: "🇿🇦", conf: "CAF" },
-  { name: "Tunisia", flag: "🇹🇳", conf: "CAF" },
-  { name: "Cabo Verde", flag: "🇨🇻", conf: "CAF" },
-  { name: "DR Congo", flag: "🇨🇩", conf: "CAF" },
-  { name: "Japan", flag: "🇯🇵", conf: "AFC" },
-  { name: "Australia", flag: "🇦🇺", conf: "AFC" },
-  { name: "South Korea", flag: "🇰🇷", conf: "AFC" },
-  { name: "Iran", flag: "🇮🇷", conf: "AFC" },
-  { name: "Saudi Arabia", flag: "🇸🇦", conf: "AFC" },
-  { name: "Qatar", flag: "🇶🇦", conf: "AFC" },
-  { name: "Jordan", flag: "🇯🇴", conf: "AFC" },
-  { name: "Uzbekistan", flag: "🇺🇿", conf: "AFC" },
-  { name: "Iraq", flag: "🇮🇶", conf: "AFC" },
-  { name: "New Zealand", flag: "🇳🇿", conf: "OFC" },
-];
+  { name: "England", cc: "GB-ENG", conf: "UEFA" },
+  { name: "France", cc: "FR", conf: "UEFA" },
+  { name: "Spain", cc: "ES", conf: "UEFA" },
+  { name: "Germany", cc: "DE", conf: "UEFA" },
+  { name: "Portugal", cc: "PT", conf: "UEFA" },
+  { name: "Netherlands", cc: "NL", conf: "UEFA" },
+  { name: "Belgium", cc: "BE", conf: "UEFA" },
+  { name: "Croatia", cc: "HR", conf: "UEFA" },
+  { name: "Switzerland", cc: "CH", conf: "UEFA" },
+  { name: "Austria", cc: "AT", conf: "UEFA" },
+  { name: "Norway", cc: "NO", conf: "UEFA" },
+  { name: "Scotland", cc: "GB-SCT", conf: "UEFA" },
+  { name: "Sweden", cc: "SE", conf: "UEFA" },
+  { name: "T\u00FCrkiye", cc: "TR", conf: "UEFA" },
+  { name: "Bosnia & Herz.", cc: "BA", conf: "UEFA" },
+  { name: "Czechia", cc: "CZ", conf: "UEFA" },
+  { name: "Argentina", cc: "AR", conf: "CONMEBOL" },
+  { name: "Brazil", cc: "BR", conf: "CONMEBOL" },
+  { name: "Uruguay", cc: "UY", conf: "CONMEBOL" },
+  { name: "Colombia", cc: "CO", conf: "CONMEBOL" },
+  { name: "Ecuador", cc: "EC", conf: "CONMEBOL" },
+  { name: "Paraguay", cc: "PY", conf: "CONMEBOL" },
+  { name: "USA", cc: "US", conf: "CONCACAF" },
+  { name: "Mexico", cc: "MX", conf: "CONCACAF" },
+  { name: "Canada", cc: "CA", conf: "CONCACAF" },
+  { name: "Panama", cc: "PA", conf: "CONCACAF" },
+  { name: "Haiti", cc: "HT", conf: "CONCACAF" },
+  { name: "Cura\u00E7ao", cc: "CW", conf: "CONCACAF" },
+  { name: "Morocco", cc: "MA", conf: "CAF" },
+  { name: "Senegal", cc: "SN", conf: "CAF" },
+  { name: "C\u00F4te d'Ivoire", cc: "CI", conf: "CAF" },
+  { name: "Egypt", cc: "EG", conf: "CAF" },
+  { name: "Algeria", cc: "DZ", conf: "CAF" },
+  { name: "Ghana", cc: "GH", conf: "CAF" },
+  { name: "South Africa", cc: "ZA", conf: "CAF" },
+  { name: "Tunisia", cc: "TN", conf: "CAF" },
+  { name: "Cabo Verde", cc: "CV", conf: "CAF" },
+  { name: "DR Congo", cc: "CD", conf: "CAF" },
+  { name: "Japan", cc: "JP", conf: "AFC" },
+  { name: "Australia", cc: "AU", conf: "AFC" },
+  { name: "South Korea", cc: "KR", conf: "AFC" },
+  { name: "Iran", cc: "IR", conf: "AFC" },
+  { name: "Saudi Arabia", cc: "SA", conf: "AFC" },
+  { name: "Qatar", cc: "QA", conf: "AFC" },
+  { name: "Jordan", cc: "JO", conf: "AFC" },
+  { name: "Uzbekistan", cc: "UZ", conf: "AFC" },
+  { name: "Iraq", cc: "IQ", conf: "AFC" },
+  { name: "New Zealand", cc: "NZ", conf: "OFC" },
+].map(t => ({ ...t, flag: codeToFlag(t.cc) }));
 
 const CONF_COLORS = {
   UEFA:     ["#003DA5", "#1a5cc8"],
@@ -877,7 +884,7 @@ function drawTicks(c, cx, cy, r, n, ang) {
   }
 }
 
-// ─── PLAYER MANAGEMENT ───
+// --- PLAYER MANAGEMENT ---
 function addPlayer() {
   const input = document.getElementById('playerInput');
   const name = input.value.trim();
@@ -908,7 +915,7 @@ function renderPlayerList() {
   el.innerHTML = allPlayers.map(p => {
     const isOut = eliminatedPlayers.has(p);
     const cls = isOut ? 'player-tag eliminated' : 'player-tag';
-    const x = isOut ? '' : `<span class="remove-x" onclick="removePlayer('${p.replace(/'/g, "\\'")}')">✕</span>`;
+    const x = isOut ? '' : `<span class="remove-x" onclick="removePlayer('${p.replace(/'/g, "\\'")}')">&#x2715;</span>`;
     return `<span class="${cls}">${p}${x}</span>`;
   }).join('');
 }
@@ -917,7 +924,7 @@ document.getElementById('playerInput').addEventListener('keydown', e => {
   if (e.key === 'Enter') addPlayer();
 });
 
-// ─── SPIN BOTH ───
+// --- SPIN BOTH ---
 function spinBoth() {
   if (spinning) return;
   const at = getActiveTeams(), ap = getActivePlayers();
@@ -1003,9 +1010,9 @@ function finalizePairing() {
         <span class="side-name">${teamResult.name}</span>
         <span class="side-sub">${teamResult.conf}</span>
       </div>
-      <span class="connector">×</span>
+      <span class="connector">&#xD7;</span>
       <div class="side">
-        <span class="side-emoji">🎮</span>
+        <span class="side-emoji">&#x1F3AE;</span>
         <span class="side-name">${playerResult}</span>
         <span class="side-sub">Player</span>
       </div>
@@ -1034,9 +1041,9 @@ function updateUI() {
 
   if (draftHistory.length > 0 && (at === 0 || ap === 0)) {
     const msg = at === 0 && ap === 0
-      ? '🏆 Draft complete!'
-      : ap === 0 ? '🏆 All players assigned!'
-      : '🏆 All teams drafted!';
+      ? '&#x1F3C6; Draft complete!'
+      : ap === 0 ? '&#x1F3C6; All players assigned!'
+      : '&#x1F3C6; All teams drafted!';
     document.getElementById('pairingResult').innerHTML = `<div class="all-done">${msg}</div>`;
   }
 }
@@ -1052,8 +1059,8 @@ function updateDraftSidebar() {
     <div class="draft-row">
       <span class="dr-num">#${i + 1}</span>
       <span class="dr-team">${d.team.flag} ${d.team.name}</span>
-      <span class="dr-arrow">→</span>
-      <span class="dr-player">🎮 ${d.player}</span>
+      <span class="dr-arrow">&#x2192;</span>
+      <span class="dr-player">&#x1F3AE; ${d.player}</span>
     </div>
   `).join('');
   el.scrollTop = el.scrollHeight;
@@ -1090,7 +1097,7 @@ function resetAll() {
   updateDraftSidebar();
 }
 
-// ─── CONFETTI ───
+// --- CONFETTI ---
 const confettiCanvas = document.getElementById('confetti');
 const cCtx = confettiCanvas.getContext('2d');
 let confettiParticles = [], confettiAnim = null;

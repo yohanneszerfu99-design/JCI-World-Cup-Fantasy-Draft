@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>JCI Calgary - FIFA World Cup 2026 Fantasy Draft Wheel</title>
+<title>FIFA World Cup 2026 Fantasy Draft Wheel</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Bebas+Neue&family=Source+Sans+3:wght@400;600&display=swap');
 
@@ -559,19 +559,57 @@
     100% { transform: scale(1); opacity: 1; }
   }
 
-  #confetti-container {
+  #flag-overlay {
     position: fixed;
     inset: 0;
     z-index: 100;
     pointer-events: none;
-    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s;
   }
 
-  .flag-particle {
-    position: absolute;
-    top: -50px;
-    pointer-events: none;
-    will-change: transform, opacity;
+  #flag-overlay.active {
+    opacity: 1;
+  }
+
+  .big-flag {
+    font-size: min(50vw, 350px);
+    line-height: 1;
+    animation: flagWave 3s ease-in-out;
+    filter: drop-shadow(0 0 60px rgba(0,0,0,0.5));
+  }
+
+  @keyframes flagWave {
+    0% {
+      transform: translateX(-120vw) rotate(-30deg) scale(0.3);
+      opacity: 0;
+    }
+    15% {
+      opacity: 1;
+    }
+    35% {
+      transform: translateX(0) rotate(0deg) scale(1);
+    }
+    45% {
+      transform: translateX(0) rotate(5deg) scale(1.05);
+    }
+    55% {
+      transform: translateX(0) rotate(-5deg) scale(1.05);
+    }
+    65% {
+      transform: translateX(0) rotate(3deg) scale(1);
+    }
+    75% {
+      transform: translateX(0) rotate(-2deg) scale(0.95);
+      opacity: 1;
+    }
+    100% {
+      transform: translateX(120vw) rotate(20deg) scale(0.3);
+      opacity: 0;
+    }
   }
 
   /* --- PRIZE SECTION --- */
@@ -1046,7 +1084,7 @@
   </div>
 </div>
 
-<div id="confetti-container"></div>
+<div id="flag-overlay"><span class="big-flag" id="bigFlag"></span></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
@@ -1577,37 +1615,18 @@ function resetAll() {
   updateDraftSidebar();
 }
 
-// --- FLAG CONFETTI ---
+// --- BIG FLAG WAVE ---
 function launchConfetti(flag) {
-  const container = document.getElementById('confetti-container');
-  // Clear any lingering particles
-  container.innerHTML = '';
-  const count = 150;
-  for (let i = 0; i < count; i++) {
-    const el = document.createElement('span');
-    el.className = 'flag-particle';
-    el.textContent = flag;
-    const x = Math.random() * 100;
-    const size = Math.random() * 18 + 18;
-    const duration = Math.random() * 3 + 3.5;
-    const delay = Math.random() * 2.5;
-    const drift = (Math.random() - 0.5) * 250;
-    const spin = (Math.random() - 0.5) * 900;
-    el.style.left = x + 'vw';
-    el.style.fontSize = size + 'px';
-    el.style.lineHeight = '1';
-    el.animate([
-      { transform: 'translateY(0) translateX(0) rotate(0deg)', opacity: 1 },
-      { transform: 'translateY(' + (window.innerHeight + 80) + 'px) translateX(' + drift + 'px) rotate(' + spin + 'deg)', opacity: 0 }
-    ], {
-      duration: duration * 1000,
-      delay: delay * 1000,
-      easing: 'cubic-bezier(0.15, 0.5, 0.35, 1)',
-      fill: 'forwards'
-    });
-    container.appendChild(el);
-    setTimeout(function() { el.remove(); }, (duration + delay) * 1000 + 100);
-  }
+  var overlay = document.getElementById('flag-overlay');
+  var bigFlag = document.getElementById('bigFlag');
+  bigFlag.textContent = flag;
+  bigFlag.style.animation = 'none';
+  bigFlag.offsetHeight;
+  bigFlag.style.animation = 'flagWave 3s ease-in-out';
+  overlay.classList.add('active');
+  setTimeout(function() {
+    overlay.classList.remove('active');
+  }, 3000);
 }
 
 window.addEventListener('resize', resizeCanvases);

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FIFA World Cup 2026 Fantasy Draft Wheel</title>
+<title>JCI Calgary - FIFA World Cup 2026 Fantasy Draft Wheel</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Bebas+Neue&family=Source+Sans+3:wght@400;600&display=swap');
 
@@ -1421,7 +1421,7 @@ function spinBoth() {
   teamCanvas.classList.add('spinning');
   playerCanvas.classList.add('spinning');
 
-  // Team: ~5 seconds
+  // Team: ~4 seconds
   teamVel = (Math.random() * 2 + 3.5) * Math.PI * 2 / 60;
   // Player: ~6 seconds
   playerVel = (Math.random() * 2 + 4) * Math.PI * 2 / 60;
@@ -1432,7 +1432,7 @@ function spinBoth() {
 function animateDual() {
   if (!teamDone) {
     teamAngle += teamVel;
-    teamVel *= 0.978;
+    teamVel *= 0.970;
     const at = getActiveTeams();
     const tARC = (2 * Math.PI) / at.length;
     const tNorm = (((-teamAngle % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2));

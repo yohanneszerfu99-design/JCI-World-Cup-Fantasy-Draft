@@ -1475,15 +1475,15 @@ function launchConfetti(flag) {
   const container = document.getElementById('confetti-container');
   // Clear any lingering particles
   container.innerHTML = '';
-  const count = 125;
+  const count = 150;
   for (let i = 0; i < count; i++) {
     const el = document.createElement('span');
     el.className = 'flag-particle';
     el.textContent = flag;
     const x = Math.random() * 100;
     const size = Math.random() * 18 + 18;
-    const duration = Math.random() * 2.5 + 2;
-    const delay = Math.random() * 2;
+    const duration = Math.random() * 3 + 3.5;
+    const delay = Math.random() * 2.5;
     const drift = (Math.random() - 0.5) * 250;
     const spin = (Math.random() - 0.5) * 900;
     el.style.left = x + 'vw';
@@ -1495,7 +1495,7 @@ function launchConfetti(flag) {
     ], {
       duration: duration * 1000,
       delay: delay * 1000,
-      easing: 'cubic-bezier(0.22, 0.6, 0.35, 1)',
+      easing: 'cubic-bezier(0.15, 0.5, 0.35, 1)',
       fill: 'forwards'
     });
     container.appendChild(el);

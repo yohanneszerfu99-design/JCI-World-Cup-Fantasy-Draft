@@ -574,6 +574,93 @@
     will-change: transform, opacity;
   }
 
+  /* --- PRIZE SECTION --- */
+  .prize-section {
+    position: relative;
+    z-index: 2;
+    margin-top: 10px;
+    width: 100%;
+    max-width: 320px;
+  }
+
+  .prize-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 4px;
+    text-align: center;
+    background: linear-gradient(135deg, var(--gold), #f5e6a3, var(--gold));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 12px;
+  }
+
+  .prize-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .prize-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 16px;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    transition: all 0.2s;
+  }
+
+  .prize-row.gold {
+    border-color: rgba(212,175,55,0.3);
+    background: rgba(212,175,55,0.06);
+  }
+
+  .prize-row.silver {
+    border-color: rgba(192,192,192,0.25);
+    background: rgba(192,192,192,0.04);
+  }
+
+  .prize-row.bronze {
+    border-color: rgba(205,127,50,0.25);
+    background: rgba(205,127,50,0.04);
+  }
+
+  .prize-icon {
+    font-size: 24px;
+    flex-shrink: 0;
+  }
+
+  .prize-label {
+    font-family: 'Oswald', sans-serif;
+    font-size: 14px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.7);
+    flex: 1;
+  }
+
+  .prize-amount {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 26px;
+    letter-spacing: 2px;
+    flex-shrink: 0;
+  }
+
+  .prize-row.gold .prize-amount {
+    background: linear-gradient(135deg, var(--gold), #f5e6a3);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .prize-row.silver .prize-amount {
+    color: #c0c0c0;
+  }
+
+  .prize-row.bronze .prize-amount {
+    color: #cd7f32;
+  }
+
   /* --- RESPONSIVE --- */
 
   /* Large tablets / small laptops */
@@ -898,6 +985,26 @@
       <div class="pointer" id="teamPointer"></div>
       <canvas class="wheel-canvas" id="teamWheel"></canvas>
       <div class="center-hub"><span>TEAMS</span></div>
+    </div>
+    <div class="prize-section">
+      <div class="prize-title">Prize Pool</div>
+      <div class="prize-list">
+        <div class="prize-row gold">
+          <span class="prize-icon">&#x1F3C6;</span>
+          <span class="prize-label">World Cup Winner</span>
+          <span class="prize-amount">$250</span>
+        </div>
+        <div class="prize-row silver">
+          <span class="prize-icon">&#x1F948;</span>
+          <span class="prize-label">2nd Place</span>
+          <span class="prize-amount">$130</span>
+        </div>
+        <div class="prize-row bronze">
+          <span class="prize-icon">&#x1F949;</span>
+          <span class="prize-label">3rd Place</span>
+          <span class="prize-amount">$100</span>
+        </div>
+      </div>
     </div>
   </div>
 
